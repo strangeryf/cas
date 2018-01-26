@@ -19,6 +19,9 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  * This is {@link JdbcPasswordManagementService}.
@@ -45,7 +48,18 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         final PasswordEncoder encoder = PasswordEncoderUtils.newPasswordEncoder(properties.getJdbc().getPasswordEncoder());
         final String password = encoder.encode(bean.getPassword());
+        final String oldPassword = (String)this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlQueryOldPassword(), new Object[]{c.getId()}, String.class);
+        if (password.equals(oldPassword)) {
+            LOGGER.warn("cannot reset with old password");
+            return false;
+        }
         final int count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, c.getId());
+        this.jdbcTemplate.update(properties.getJdbc().getSqlUnexpireAccount(), c.getId());
+        final Date now = new Date();
+        final SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        LOGGER.debug("last modified:" + timeStampFormat.format(now));
+        final Timestamp nowTs = Timestamp.valueOf(timeStampFormat.format(now));
+        this.jdbcTemplate.update(properties.getJdbc().getSqlUpdateUserTimestamp(), nowTs, c.getId());
         return count > 0;
     }
 

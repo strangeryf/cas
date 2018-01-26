@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.jdbc;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -22,6 +23,9 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Date;
+import java.util.Calendar;
+import java.text.ParseException;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -42,18 +46,23 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
+    private final String filedLastModified;
+    private final int passwordExpiryMinutes;
     private final Map<String, Collection<String>> principalAttributeMap;
 
     public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
+                                              final String filedLastModified, final int passwordExpiryMinutes,
                                               final Map<String, Collection<String>> attributes) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.sql = sql;
         this.fieldPassword = fieldPassword;
         this.fieldExpired = fieldExpired;
         this.fieldDisabled = fieldDisabled;
+        this.filedLastModified = filedLastModified;
+        this.passwordExpiryMinutes = passwordExpiryMinutes;
         this.principalAttributeMap = attributes;
     }
 
@@ -89,9 +98,30 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
+
+            if (this.passwordExpiryMinutes>0 && StringUtils.isNotBlank(this.filedLastModified)) {
+                final Object dbLastModified = dbFields.get(this.filedLastModified);
+                final String strLastModified = dbLastModified.toString();
+                if (dbLastModified != null) {
+                    try {
+                        final Date lastModified = DateUtils.parseDate(strLastModified, "yyyy-MM-dd HH:mm:ss.S");
+                        final Calendar expiry = Calendar.getInstance();
+                        expiry.setTime(lastModified);
+                        final Calendar now = Calendar.getInstance();
+                        expiry.add(Calendar.MINUTE, this.passwordExpiryMinutes);
+                        LOGGER.debug("Account last modified: " + strLastModified);
+                        LOGGER.debug("Account expiration: " + expiry.toString());
+                        if (expiry.compareTo(now) < 0) {
+                            throw new AccountPasswordMustChangeException("Password has expired");
+                        }
+                    } catch(final ParseException e) {
+                        LOGGER.debug(e.getMessage());
+                    }
+                }
+            }
+
             this.principalAttributeMap.forEach((key, attributeNames) -> {
                 final Object attribute = dbFields.get(key);
-  
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", key);
                     attributeNames.forEach(s -> {

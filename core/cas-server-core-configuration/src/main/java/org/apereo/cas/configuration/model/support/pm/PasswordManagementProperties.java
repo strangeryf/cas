@@ -147,6 +147,18 @@ public class PasswordManagementProperties implements Serializable {
          * SQL query to locate security questions for the account, if any.
          */
         private String sqlSecurityQuestions;
+        /**
+         * SQL query to restore an expired user account.
+         */
+        private String sqlUnexpireAccount;
+        /**
+         * SQL query to update a user timestamp(last modified).
+         */
+        private String sqlUpdateUserTimestamp;
+        /**
+         * SQL query to get a user's password.
+         */
+        private String sqlQueryOldPassword;
 
         public String getSqlChangePassword() {
             return sqlChangePassword;
@@ -178,6 +190,30 @@ public class PasswordManagementProperties implements Serializable {
 
         public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
             this.passwordEncoder = passwordEncoder;
+        }
+
+        public String getSqlUnexpireAccount() {
+            return sqlUnexpireAccount;
+        }
+
+        public void setSqlUnexpireAccount(final String sqlUnexpireAccount) {
+            this.sqlUnexpireAccount = sqlUnexpireAccount;
+        }
+
+        public String getSqlUpdateUserTimestamp() {
+            return sqlUpdateUserTimestamp;
+        }
+
+        public void setSqlUpdateUserTimestamp(final String sqlUpdateUserTimestamp) {
+            this.sqlUpdateUserTimestamp = sqlUpdateUserTimestamp;
+        }
+
+        public String getSqlQueryOldPassword() {
+            return sqlQueryOldPassword;
+        }
+
+        public void setSqlQueryOldPassword(final String sqlQueryOldPassword) {
+            this.sqlQueryOldPassword = sqlQueryOldPassword;
         }
     }
 

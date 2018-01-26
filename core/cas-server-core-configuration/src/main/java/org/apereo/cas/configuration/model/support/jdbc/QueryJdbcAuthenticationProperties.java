@@ -49,6 +49,14 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
      */
     private String fieldDisabled;
     /**
+     * Datetime field that should indicate when the password is last modified.
+     */
+    private String fieldLastModified;
+    /**
+     * Password expires in specified minutes.
+     */
+    private int passwordExpiryMinutes;
+    /**
      * List of column names to fetch as user attributes.
      */
     private List principalAttributeList = new ArrayList();
@@ -149,6 +157,22 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
 
     public String getFieldDisabled() {
         return fieldDisabled;
+    }
+
+    public String getFieldLastModified() {
+        return fieldLastModified;
+    }
+
+    public void setFieldLastModified(final String fieldLastModified) {
+        this.fieldLastModified = fieldLastModified;
+    }
+
+    public int getPasswordExpiryMinutes() {
+        return passwordExpiryMinutes;
+    }
+
+    public void setPasswordExpiryMinutes(final int passwordExpiryMinutes) {
+        this.passwordExpiryMinutes = passwordExpiryMinutes;
     }
 
     public void setFieldDisabled(final String fieldDisabled) {

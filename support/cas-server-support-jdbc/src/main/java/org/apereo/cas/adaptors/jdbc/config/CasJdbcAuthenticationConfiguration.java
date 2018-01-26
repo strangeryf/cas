@@ -140,6 +140,7 @@ public class CasJdbcAuthenticationConfiguration {
                 jdbcPrincipalFactory(), b.getOrder(),
                 JpaBeans.newDataSource(b), b.getSql(), b.getFieldPassword(),
                 b.getFieldExpired(), b.getFieldDisabled(),
+                b.getFieldLastModified(), b.getPasswordExpiryMinutes(),
                 CollectionUtils.wrap(attributes));
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));

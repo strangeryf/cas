@@ -375,3 +375,12 @@ tasks.coveralls {
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoAggregateReport
 }
+
+javadoc {
+    options{
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+    }
+}
