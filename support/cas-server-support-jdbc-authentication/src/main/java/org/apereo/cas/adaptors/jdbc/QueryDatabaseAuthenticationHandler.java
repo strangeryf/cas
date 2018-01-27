@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Date;
 import java.util.Calendar;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -109,8 +110,10 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                         expiry.setTime(lastModified);
                         final Calendar now = Calendar.getInstance();
                         expiry.add(Calendar.MINUTE, this.passwordExpiryMinutes);
+                        final Date expiryDate = expiry.getTime();
+                        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         LOGGER.debug("Account last modified: " + strLastModified);
-                        LOGGER.debug("Account expiration: " + expiry.toString());
+                        LOGGER.debug("Account expiration: " + dateFormat.format(expiryDate));
                         if (expiry.compareTo(now) < 0) {
                             throw new AccountPasswordMustChangeException("Password has expired");
                         }
