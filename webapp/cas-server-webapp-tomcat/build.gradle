@@ -4,4 +4,24 @@ description = "Apereo CAS Web Application via Apache Tomcat"
 
 dependencies {
     implementation libraries.springboottomcat
+    // JWT
+    implementation project(":support:cas-server-support-token-webflow")
+    implementation project(":support:cas-server-support-token-tickets")
+    // Database
+    implementation project(":support:cas-server-support-jdbc")
+    implementation project(":support:cas-server-support-jdbc-drivers")
+    implementation "mysql:mysql-connector-java:6.0.6"
+    // JDBC authentication
+    implementation project(":support:cas-server-support-jdbc-authentication")
+    // JDBC Password Management
+    implementation project(":support:cas-server-support-pm-jdbc")
+    // RESTful API
+    implementation project(":support:cas-server-support-rest")
+    implementation project(":support:cas-server-support-rest-services")
+    // MongoDb ticket registry
+    implementation project(":support:cas-server-support-mongo-ticket-registry")
+    // MongoDb service registry
+    implementation project(":support:cas-server-support-mongo-service-registry")
+    // MongoDb configuration server
+    implementation project(":core:cas-server-core-configuration-cloud-mongo")
 }
