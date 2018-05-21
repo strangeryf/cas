@@ -47,7 +47,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
-    private final String filedLastModified;
+    private final String fieldLastModified;
     private final int passwordExpiryMinutes;
     private final Map<String, Collection<String>> principalAttributeMap;
 
@@ -55,14 +55,14 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                                               final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
-                                              final String filedLastModified, final int passwordExpiryMinutes,
+                                              final String fieldLastModified, final int passwordExpiryMinutes,
                                               final Map<String, Collection<String>> attributes) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.sql = sql;
         this.fieldPassword = fieldPassword;
         this.fieldExpired = fieldExpired;
         this.fieldDisabled = fieldDisabled;
-        this.filedLastModified = filedLastModified;
+        this.fieldLastModified = fieldLastModified;
         this.passwordExpiryMinutes = passwordExpiryMinutes;
         this.principalAttributeMap = attributes;
     }
@@ -100,8 +100,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 }
             }
 
-            if (this.passwordExpiryMinutes>0 && StringUtils.isNotBlank(this.filedLastModified)) {
-                final Object dbLastModified = dbFields.get(this.filedLastModified);
+            if (this.passwordExpiryMinutes>0 && StringUtils.isNotBlank(this.fieldLastModified)) {
+                final Object dbLastModified = dbFields.get(this.fieldLastModified);
                 final String strLastModified = dbLastModified.toString();
                 if (dbLastModified != null) {
                     try {
